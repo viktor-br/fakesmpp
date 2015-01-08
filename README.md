@@ -1,18 +1,35 @@
 fakesmpp
 ========
 
-Simple fake SMPP server based on nodejs smpp package (https://www.npmjs.com/package/smpp).
+Simple fake SMPP server based on node.js smpp package (https://www.npmjs.com/package/smpp). By default server listen port 2775. It able to authorize
+ESME (by default system_id=user and password=pass, but you can use --auth option to set up your own parameters). By default server request ESME with deliver_sm 
+(message delivered) successed just after submit_sm request from ESME, but you can manage time delay and statuses of the answer.
 
 Required node packages:
-smpp
-winston -- logging
-strftime -- date format
-optimistic -- command options
 
-Running on default 2775 port and always answer Ok status (DELIVRD) and authorize user (service_id) with pass password.
+- smpp -- SMPP realisation 
+- winston -- logging
+- strftime -- date format
+- optimistic -- command options
 
-[sudo] nodejs smpp.js
+##Install
 
-Running on custom 9999 port with delay between 5 and 10 seconds for message delivered (deliver_sm) request and return status delivrd for incomming message, then answer expired, then delivrd agiain and so on. u1 (service_id) with password pass1 and u2 with password pass2 will be authorized on SMPP server.
+```bash
+git clone https://github.com/viktor-br/fakesmpp.git
+cd [folder with fakesmpp code]
+npm install smpp winston strftime optimist
+```
 
-[sudo] nodejs smpp.js --port=9999 --ddmin=5000 --ddmax=10000 --auth=u1:pass1,u2:pass2 --statuses=delivrd,expired
+##Usage
+1. Listen 2775 port and always answer Ok status (DELIVRD) and authorize user (service_id) with pass password.
+
+```bash
+[sudo] node smpp.js
+```
+
+2. Listen 9999 port with delay between 5 and 10 seconds for message delivered (deliver_sm) request to ESME and return iterated one by one statuses (delivered, then status expired, then delivered again and so on). u1 (service_id) with password pass1 and u2 with password pass2 will be authorized on SMPP server.
+Available status values: delivered, expired, deleted, undelivered, rejected, billing_error, blacklisted, unknown.
+
+```bash
+[sudo] node smpp.js --port=2775 --ddmin=5000 --ddmax=10000 --auth=user:pass,u1:pass1,u2:pass2 --statuses=delivered,expired,unknown
+```

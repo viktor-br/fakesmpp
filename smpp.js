@@ -4,13 +4,21 @@
 var smpp = require('smpp');
 var winston = require('winston');
 var strftime = require('strftime');
-var argv = require('optimist')
-    .options('port', {alias: 'p', default: 2775})
-    .options('ddmin', {default: 0}) // delivery min delay
-    .options('ddmax', {default: 0}) // delivery max delay
-    .options('statuses', {alias: 's', default: 'delivered'}) // fake SMPP will be itereating statuses for delivery_sm response.
-    .options('auth', {default: 'user:pass'})
+var optimist = require('optimist');
+var argv = optimist
+    .options('port', {alias: 'p', default: 2775, describe: 'Port which server listen to.'})
+    .options('ddmin', {default: 0, describe: 'Minimum delay after submit_sm requested and deliver_sm request to ESME.'}) // delivery min delay
+    .options('ddmax', {default: 0, describe: 'Maximum delay after submit_sm requested and deliver_sm request to ESME.'}) // delivery max delay
+    .options('statuses', {alias: 's', default: 'delivered', describe: "Comma separated list of statuses, server send in deliver_sm request to ESME."})
+    .options('auth', {default: 'user:pass', describe: 'Comma separated auth credentials in format [system_id]:[password]'})
+    .options('help', {default: false, alias: 'h', describe: 'Current help.'})
     .argv;
+
+if (argv.help) {
+    optimist.showHelp();
+    return;
+}
+
 var Statuses = require('./statuses').Statuses;
 // Read auth data
 var auth_data = function(str) {
@@ -35,7 +43,7 @@ var logger = new (winston.Logger)({
     ]});
 
 // List of statuses which we iterate in response.
-var statuses = new Statuses(argv.statuses.split(',').map(function (val) {return val.toUpperCase()}));
+var statuses = new Statuses(argv.statuses.split(','));//.map(function (val) {return val.toUpperCase()}));
 
 // Validate options
 if (argv.ddmax < argv.ddmin) {
@@ -61,7 +69,7 @@ var server = smpp.createServer(function(session) {
                 var status = statuses.next();
                 var dr = getDeliveryReceipt(msg_id, status, msg_received_on, new Date(), pdu.short_message.message.toString());
                 logger.info("delivery_sm.short_message=%s", dr);
-                logger.info("Send deliver_sm for id=%d with status=%s.", msg_id, status);
+                logger.info("Send deliver_sm for id=%d with status.stat=%s, status.err=%s.", msg_id, status.stat, status.err);
                 session.deliver_sm({
                     source_addr: pdu.source_addr,
                     source_addr_ton: pdu.source_addr_ton,
@@ -122,8 +130,8 @@ function checkAsyncUserPass(system_id, password, func) {
 // Return random delay for delivery_sm answer
 //
 function getDeliveryDelay(min, max) {
-    if (min == 0 && max == 0) {
-        return 0;
+    if (min == max) {
+        return min;
     }
 
     return Math.random() * (max - min) + min;
@@ -139,8 +147,8 @@ function getDeliveryReceipt(msg_id, status, received_on, done_on, message) {
         dlvrd: 1, // not used in fact
         "submit date": strftime("%y%m%d%H%M", received_on), 
         "done date": strftime("%y%m%d%H%M", done_on), 
-        stat: status, 
-        err: "", //    Additional error code, provider specific.
+        stat: status.stat, 
+        err: status.err,
         text: message.substring(0, 20) // first 20 symbols of the message
     };
     var delivery_receipt_a = [];
