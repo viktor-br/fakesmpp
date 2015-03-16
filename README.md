@@ -28,5 +28,5 @@ npm install smpp winston strftime optimist
 2. Listen 9999 port with delay between 5 and 10 seconds for message delivered (deliver_sm) request to ESME and return iterated one by one statuses (delivered, then status expired, then delivered again and so on). u1 (service_id) with password pass1 and u2 with password pass2 will be authorized on SMPP server.
 Available status values: delivered, expired, deleted, undelivered, rejected, billing_error, blacklisted, unknown.
 ```bash
-[sudo] node smpp.js --port=2775 --ddmin=5000 --ddmax=10000 --auth=user:pass,u1:pass1,u2:pass2 --statuses=delivered,expired,unknown
+[sudo] node smpp.js --port=2775 --ddmin=5000 --ddmax=10000 --auth=user:pass,u1:pass1,u2:pass2 --statuses=delivered,expired,spam_rejected
 ```
