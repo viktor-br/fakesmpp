@@ -54,9 +54,9 @@ var server = smpp.createServer(function(session) {
     session.on('bind_transceiver', function(pdu) {
         logger.info("bind_transceiver requested.", {system_id: pdu.system_id});
         session.on('submit_sm', function(pdu) {
-            var msg_received_on = Date.now();
+            var msg_received_on = new Date();
             var r = Math.floor(Math.random() * (99 - 10) + 10);
-            var msg_id = ""+msg_received_on + "." + r;
+            var msg_id = ""+msg_received_on.getTime() + "." + r;
             var delivery_delay = getDeliveryDelay(argv.ddmin, argv.ddmax);
             logger.info("Msg was received, id=%s assigned.", msg_id, {From: pdu.source_addr, To: pdu.destination_addr, Msg: pdu.short_message.message.toString(), ScheduleDeliveryTime: pdu.schedule_delivery_time});
             
