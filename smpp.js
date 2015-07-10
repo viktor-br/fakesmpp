@@ -58,7 +58,7 @@ var server = smpp.createServer(function(session) {
             var r = Math.floor(Math.random() * (99 - 10) + 10);
             var msg_id = ""+msg_received_on.getTime() + "." + r;
             var delivery_delay = getDeliveryDelay(argv.ddmin, argv.ddmax);
-            logger.info("Msg was received, id=%s assigned.", msg_id, {From: pdu.source_addr, To: pdu.destination_addr, Msg: pdu.short_message.message.toString(), ScheduleDeliveryTime: pdu.schedule_delivery_time});
+            logger.info("Msg was received, id=%s assigned.", msg_id, {From: pdu.source_addr, To: pdu.destination_addr, ShortMsg: pdu.short_message.message.toString(), MsgPayload: pdu.message_payload.message.toString(), ScheduleDeliveryTime: pdu.schedule_delivery_time});
             
             logger.info("Send submit_sm_resp for id=%s.", msg_id);
             session.send(pdu.response({
