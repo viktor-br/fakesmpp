@@ -4,19 +4,19 @@
  */
 function Statuses(list) {
     this.availabile_delivery_statuses = {
-        'delivered': {stat: 'DELIVRD', err: "000"},
-        'provider_failure': {stat: 'UNKNOWN', err: "02f"},
-        'undelivered': {stat: 'UNDELIV',  err: "023"},
-        'phone_not_exists': {stat: 'REJECTD', err: "035"},
-        'billing_error': {stat: 'REJECTD', err: "038"},
-        'spam_rejected': {stat: 'REJECTD', err: "039"},
-        'flooding': {stat: 'REJECTD', err: "03a"},
-        'blacklisted': {stat: 'REJECTD', err: "03c"},
-        'retrying': {stat: 'ACCEPTD', err: "044"},
-        'canceled': {stat: 'REJECTD', err: "052"},
-        'expired': {stat: 'EXPIRED', err: "058"},
-        'deleted_by_sender': {stat: 'DELETED', err: "05f"},
-        'deleted_by_admin': {stat: 'DELETED', err: "060"},
+        'delivered': {stat: 'DELIVRD', err: "0"},
+        'provider_failure': {stat: 'UNKNOWN', err: "47"},
+        'undelivered': {stat: 'UNDELIV',  err: "35"},
+        'phone_not_exists': {stat: 'REJECTD', err: "53"},
+        'billing_error': {stat: 'REJECTD', err: "56"},
+        'spam_rejected': {stat: 'REJECTD', err: "57"},
+        'flooding': {stat: 'REJECTD', err: "58"},
+        'blacklisted': {stat: 'REJECTD', err: "60"},
+        'retrying': {stat: 'ACCEPTD', err: "68"},
+        'canceled': {stat: 'REJECTD', err: "82"},
+        'expired': {stat: 'EXPIRED', err: "88"},
+        'deleted_by_sender': {stat: 'DELETED', err: "95"},
+        'deleted_by_admin': {stat: 'DELETED', err: "96"},
         'invalid_format': {stat: 'REJECTD', err: "778"},
     };
     this.items = [];
